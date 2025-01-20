@@ -1,0 +1,285 @@
+
+------------------------------------------------------------------------------------------------
+
+Input: x = 5 + 3
+Tokens: [VariableToken "x"; AssignToken; NumberToken 5; OperatorToken "+"; NumberToken 3]
+
+--- (AST) ---
+Assignment(x)
+  Add(
+    Number(5)
+    Number(3)
+  )
+
+--- Program Execution ---
+Final symbol table: map [("x", 8)] 
+
+------------------------------------------------------------------------------------------------
+
+Input: x = 5 $ 3
+Error: Unexpected character: $
+
+------------------------------------------------------------------------------------------------
+
+Input: x = 5 +
+Tokens: [VariableToken "x"; AssignToken; NumberToken 5; OperatorToken "+"]
+
+--- (AST) ---
+Error: Unexpected token in expression
+
+------------------------------------------------------------------------------------------------
+
+Input: x = (5 + 3) * 2
+Tokens: [VariableToken "x"; AssignToken; OpenParenToken; NumberToken 5;
+ OperatorToken "+"; NumberToken 3; CloseParenToken; OperatorToken "*";
+ NumberToken 2]
+
+--- (AST) ---
+Assignment(x)
+  Multiply(
+    Add(
+      Number(5)
+      Number(3)
+    )
+    Number(2)
+  )
+
+--- Program Execution ---
+Final symbol table: map [("x", 16)] 
+
+------------------------------------------------------------------------------------------------
+
+Input: x = (5 + 3 * 2
+Tokens: [VariableToken "x"; AssignToken; OpenParenToken; NumberToken 5;
+ OperatorToken "+"; NumberToken 3; OperatorToken "*"; NumberToken 2]
+
+--- (AST) ---
+Error: Expected closing parenthesis
+
+------------------------------------------------------------------------------------------------
+
+Input: x = (5 * 3) + (10 + 2)
+Tokens: [VariableToken "x"; AssignToken; OpenParenToken; NumberToken 5;
+ OperatorToken "*"; NumberToken 3; CloseParenToken; OperatorToken "+";
+ OpenParenToken; NumberToken 10; OperatorToken "+"; NumberToken 2;
+ CloseParenToken]
+
+--- (AST) ---
+Assignment(x)
+  Add(
+    Multiply(
+      Number(5)
+      Number(3)
+    )
+    Add(
+      Number(10)
+      Number(2)
+    )
+  )
+
+--- Program Execution ---
+Final symbol table: map [("x", 27)] 
+
+------------------------------------------------------------------------------------------------
+
+Input: x = 10 / 0
+Tokens: [VariableToken "x"; AssignToken; NumberToken 10; OperatorToken "/";
+ NumberToken 0]
+
+--- (AST) ---
+Assignment(x)
+  Divide(
+    Number(10)
+    Number(0)
+  )
+
+--- Program Execution ---
+Error: Attempted to divide by zero.
+
+------------------------------------------------------------------------------------------------
+
+Input: x = z + 2
+Tokens: [VariableToken "x"; AssignToken; VariableToken "z"; OperatorToken "+";
+ NumberToken 2]
+
+--- (AST) ---
+Assignment(x)
+  Add(
+    Variable(z)
+    Number(2)
+  )
+
+--- Program Execution ---
+Error: Undefined variable: z
+
+------------------------------------------------------------------------------------------------
+
+Input: x = 5 + 3; y = x * 2;
+Tokens: [VariableToken "x"; AssignToken; NumberToken 5; OperatorToken "+"; NumberToken 3;
+ SemicolonToken; VariableToken "y"; AssignToken; VariableToken "x";
+ OperatorToken "*"; NumberToken 2; SemicolonToken]
+
+--- (AST) ---
+Assignment(x)
+  Add(
+    Number(5)
+    Number(3)
+  )
+Assignment(y)
+  Multiply(
+    Variable(x)
+    Number(2)
+  )
+
+--- Program Execution ---
+Final symbol table: map [("x", 8); ("y", 16)] 
+
+------------------------------------------------------------------------------------------------
+
+Input: x = 5 + 3 y = x * 2;
+Tokens: [VariableToken "x"; AssignToken; NumberToken 5; OperatorToken "+"; NumberToken 3;
+ VariableToken "y"; AssignToken; VariableToken "x"; OperatorToken "*";
+ NumberToken 2; SemicolonToken]
+
+--- (AST) ---
+Error: Expected semicolon after statement
+
+------------------------------------------------------------------------------------------------
+
+Input: x = 5 + 3; if x > 0 then x = x - 1
+Tokens: [VariableToken "x"; AssignToken; NumberToken 5; OperatorToken "+"; NumberToken 3;
+ SemicolonToken; IfToken; VariableToken "x"; ComparisonToken ">"; NumberToken 0;
+ ThenToken; VariableToken "x"; AssignToken; VariableToken "x"; OperatorToken "-";
+ NumberToken 1]
+
+--- (AST) ---
+Assignment(x)
+  Add(
+    Number(5)
+    Number(3)
+  )
+IfStatement(
+  Condition:
+    Comparison(>)
+      Variable(x)
+      Number(0)
+  If Block:
+    Assignment(x)
+      Subtract(
+        Variable(x)
+        Number(1)
+      )
+)
+
+--- Program Execution ---
+Final symbol table: map [("x", 7)] 
+
+------------------------------------------------------------------------------------------------
+
+Input: x = 5 + 3; y = x * 2; if y > 10 then y = y / 2
+Tokens: [VariableToken "x"; AssignToken; NumberToken 5; OperatorToken "+"; NumberToken 3;
+ SemicolonToken; VariableToken "y"; AssignToken; VariableToken "x";
+ OperatorToken "*"; NumberToken 2; SemicolonToken; IfToken; VariableToken "y";
+ ComparisonToken ">"; NumberToken 10; ThenToken; VariableToken "y"; AssignToken;
+ VariableToken "y"; OperatorToken "/"; NumberToken 2]
+
+--- (AST) ---
+Assignment(x)
+  Add(
+    Number(5)
+    Number(3)
+  )
+Assignment(y)
+  Multiply(
+    Variable(x)
+    Number(2)
+  )
+IfStatement(
+  Condition:
+    Comparison(>)
+      Variable(y)
+      Number(10)
+  If Block:
+    Assignment(y)
+      Divide(
+        Variable(y)
+        Number(2)
+      )
+)
+
+--- Program Execution ---
+Final symbol table: map [("x", 8); ("y", 8)] 
+
+------------------------------------------------------------------------------------------------
+
+Input: x = 10; y = 20; z = 0; if y > x then z = 100
+Tokens: [VariableToken "x"; AssignToken; NumberToken 10; SemicolonToken;
+ VariableToken "y"; AssignToken; NumberToken 20; SemicolonToken;
+ VariableToken "z"; AssignToken; NumberToken 0; SemicolonToken; IfToken;
+ VariableToken "y"; ComparisonToken ">"; VariableToken "x"; ThenToken;
+ VariableToken "z"; AssignToken; NumberToken 100]
+
+--- (AST) ---
+Assignment(x)
+  Number(10)
+Assignment(y)
+  Number(20)
+Assignment(z)
+  Number(0)
+IfStatement(
+  Condition:
+    Comparison(>)
+      Variable(y)
+      Variable(x)
+  If Block:
+    Assignment(z)
+      Number(100)
+)
+
+--- Program Execution ---
+Final symbol table: map [("x", 10); ("y", 20); ("z", 100)] 
+
+------------------------------------------------------------------------------------------------
+
+Input: if x > 0 x = 2
+Tokens: [IfToken; VariableToken "x"; ComparisonToken ">"; NumberToken 0;
+ VariableToken "x"; AssignToken; NumberToken 2]
+
+--- (AST) ---
+Error: Expected 'then' after condition
+
+------------------------------------------------------------------------------------------------
+
+Input: ef x > 0 then x = 0
+Tokens: [VariableToken "ef"; VariableToken "x"; ComparisonToken ">"; NumberToken 0;
+ ThenToken; VariableToken "x"; AssignToken; NumberToken 0]
+
+--- (AST) ---
+Error: Unexpected token in statement
+
+------------------------------------------------------------------------------------------------
+
+Input: x = 0; while x < 5 then x = x + 1
+Tokens: [VariableToken "x"; AssignToken; NumberToken 0; SemicolonToken; WhileToken;
+ VariableToken "x"; ComparisonToken "<"; NumberToken 5; ThenToken;
+ VariableToken "x"; AssignToken; VariableToken "x"; OperatorToken "+";
+ NumberToken 1]
+
+--- (AST) ---
+Assignment(x)
+  Number(0)
+WhileLoop(
+  Condition:
+    Comparison(<)
+      Variable(x)
+      Number(5)
+  Block:
+    Assignment(x)
+      Add(
+        Variable(x)
+        Number(1)
+      )
+)
+
+--- Program Execution ---
+Final symbol table: map [("x", 5)] 
