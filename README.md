@@ -21,3 +21,19 @@ The mini-language supports the following constructs:
 1. **Variable Assignment**:
    ```plaintext
    x = 5 + 3
+
+2. **Arithmetic Operations**:
+   ```plaintext
+    x = (5 + 3) * 2
+
+3. **Conditional Statements**:
+   ```plaintext
+   if x > 0 then x = x - 1
+   
+4. **Loops**:
+   ```plaintext
+   while x < 5 then x = x + 1
+
+5. **Multiple Statements**:
+   ```plaintext
+   x = 5 + 3; y = x * 2
