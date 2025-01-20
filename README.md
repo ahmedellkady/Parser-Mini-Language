@@ -33,3 +33,41 @@ The mini-language supports the following constructs:
 5. **Multiple Statements**:
    ```plaintext
    x = 5 + 3; y = x * 2
+   
+## Example Output
+
+Here is the output of the program for the input `x = 10; y = 20; z = 0; if y > x then z = 100 else z = 0`:
+
+```plaintext
+------------------------------------------------------------------------------------------------
+
+Input: x = 10; y = 20; z = 0; if y > x then z = 100 else z = 0
+Tokens: [VariableToken "x"; AssignToken; NumberToken 10; SemicolonToken;
+ VariableToken "y"; AssignToken; NumberToken 20; SemicolonToken;
+ VariableToken "z"; AssignToken; NumberToken 0; SemicolonToken; IfToken;
+ VariableToken "y"; ComparisonToken ">"; VariableToken "x"; ThenToken;
+ VariableToken "z"; AssignToken; NumberToken 100; ElseToken; VariableToken "z";
+ AssignToken; NumberToken 0]
+
+--- (AST) ---
+Assignment(x)
+  Number(10)
+Assignment(y)
+  Number(20)
+Assignment(z)
+  Number(0)
+IfStatement(
+  Condition:
+    Comparison(>)
+      Variable(y)
+      Variable(x)
+  If Block:
+    Assignment(z)
+      Number(100)
+  Else Block:
+    Assignment(z)
+      Number(0)
+)
+
+--- Program Execution ---
+Final symbol table: map [("x", 10); ("y", 20); ("z", 100)]
