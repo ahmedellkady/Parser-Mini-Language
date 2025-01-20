@@ -36,7 +36,7 @@ The mini-language supports the following constructs:
    
 ## Example Output
 
-Here is the output of the program for the input `x = 10; y = 20; z = 0; if y > x then z = 100 else z = 0`:
+Here is the output of the program for the input `x = 10; y = 20; z = 0; if y > x then z = 100`:
 
 ```plaintext
 ------------------------------------------------------------------------------------------------
@@ -71,3 +71,89 @@ IfStatement(
 
 --- Program Execution ---
 Final symbol table: map [("x", 10); ("y", 20); ("z", 100)]
+```
+
+Here is the output of the program for the input `x = 0; while x < 5 then x = x + 1`:
+
+```plaintext
+------------------------------------------------------------------------------------------------
+
+Input: x = 0; while x < 5 then x = x + 1
+Tokens: [VariableToken "x"; AssignToken; NumberToken 0; SemicolonToken; WhileToken;
+ VariableToken "x"; ComparisonToken "<"; NumberToken 5; ThenToken;
+ VariableToken "x"; AssignToken; VariableToken "x"; OperatorToken "+";
+ NumberToken 1]
+
+--- (AST) ---
+Assignment(x)
+  Number(0)
+WhileLoop(
+  Condition:
+    Comparison(<)
+      Variable(x)
+      Number(5)
+  Block:
+    Assignment(x)
+      Add(
+        Variable(x)
+        Number(1)
+      )
+)
+
+--- Program Execution ---
+Final symbol table: map [("x", 5)]
+```
+
+Here is the output of the program for the input `x = 5 + 3 y = x * 2;`:
+
+```plaintext
+------------------------------------------------------------------------------------------------
+
+Input: x = 5 + 3 y = x * 2;
+Tokens: [VariableToken "x"; AssignToken; NumberToken 5; OperatorToken "+"; NumberToken 3;
+ VariableToken "y"; AssignToken; VariableToken "x"; OperatorToken "*";
+ NumberToken 2; SemicolonToken]
+
+--- (AST) ---
+Error: Expected semicolon after statement
+```
+
+Here is the output of the program for the input `x = z + 2`:
+
+```plaintext
+------------------------------------------------------------------------------------------------
+
+Input: x = z + 2
+Tokens: [VariableToken "x"; AssignToken; VariableToken "z"; OperatorToken "+";
+ NumberToken 2]
+
+--- (AST) ---
+Assignment(x)
+  Add(
+    Variable(z)
+    Number(2)
+  )
+
+--- Program Execution ---
+Error: Undefined variable: z
+```
+
+Here is the output of the program for the input `x = 10 / 0`:
+
+```plaintext
+------------------------------------------------------------------------------------------------
+
+Input: x = 10 / 0
+Tokens: [VariableToken "x"; AssignToken; NumberToken 10; OperatorToken "/";
+ NumberToken 0]
+
+--- (AST) ---
+Assignment(x)
+  Divide(
+    Number(10)
+    Number(0)
+  )
+
+--- Program Execution ---
+Error: Attempted to divide by zero.
+```
