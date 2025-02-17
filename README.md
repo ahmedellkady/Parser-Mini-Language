@@ -1,6 +1,6 @@
 # Parser Mini-Language
 
-This project implements a simple parser mini-language in both **functional** and **imperative** styles using F#. The interpreter supports basic arithmetic operations, variable assignments, conditional statements (`if`), and loops (`while`).
+This project implements a simple parser mini-language in both **functional** and **imperative** paradigms using F#. The interpreter supports basic arithmetic operations, variable assignments, conditional statements (`if`), and loops (`while`).
 
 ## Features
 
